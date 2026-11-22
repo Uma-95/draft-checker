@@ -369,6 +369,7 @@ function init() {
   const editor = $("editor"), run = $("run"), notes = $("notes"), summary = $("summary"), list = $("allChecks"), err = $("error");
   let checksThisSession = 0;
   let lastResults = null;
+  let lastMeta = "";
 
   editor.addEventListener("paste", (e) => {
     e.preventDefault();
@@ -418,7 +419,7 @@ function init() {
 
   $("copy").addEventListener("click", async () => {
     if (!lastResults) return;
-    const tsv = "Check\tTool result\n" + PRIORITY.map((id) => `${CHECKS[id].name}\t${STATUS_LABEL[lastResults[id].status]}`).join("\n");
+    const tsv = "Check\tTool result\n" + PRIORITY.map((id) => `${CHECKS[id].name}\t${STATUS_LABEL[lastResults[id].status]}`).join("\n") + (lastMeta ? `\n${lastMeta}` : "");
     try { await navigator.clipboard.writeText(tsv); $("copy").textContent = "Copied"; setTimeout(() => ($("copy").textContent = "Copy results"), 1500); } catch (e) {}
     track("results_copied");
   });
@@ -447,6 +448,7 @@ function init() {
       track("ai_error", { reason: e.message });
     }
     Object.assign(results, aiChecks(d, ai));
+    lastMeta = ai ? `Model\t${ai.model_used || ""}\nPrompt\t${ai.prompt_version || ""}` : "";
     lastResults = results;
     render(results, "done");
     run.disabled = false; run.textContent = "Check again";
@@ -457,7 +459,9 @@ function init() {
       fails: PRIORITY.filter((id) => results[id].status === "fail").length,
       unsure: PRIORITY.filter((id) => results[id].status === "unsure").length,
       failed_checks: PRIORITY.filter((id) => results[id].status === "fail"),
-      ai_ok: aiOk
+      ai_ok: aiOk,
+      model_used: ai ? ai.model_used : null,
+      prompt_version: ai ? ai.prompt_version : null
     });
     checksThisSession++;
   });
