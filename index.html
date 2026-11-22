@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Draft Check: SEO fixes before you publish</title>
+<meta name="description" content="Paste a blog draft and get the few SEO content fixes that matter most, each tied to the exact sentence.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- PostHog: paste YOUR personal project key below (PostHog > Project settings).
+     Autocapture and session recording are OFF so drafts are never recorded. -->
+<script>
+  window.POSTHOG_KEY = "YOUR_POSTHOG_PROJECT_KEY";
+  window.POSTHOG_HOST = "https://us.i.posthog.com"; // use https://eu.i.posthog.com if your project is in the EU region
+  if (window.POSTHOG_KEY && !window.POSTHOG_KEY.startsWith("YOUR_")) {
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init(window.POSTHOG_KEY, {
+      api_host: window.POSTHOG_HOST,
+      autocapture: false,
+      disable_session_recording: true,
+      capture_pageview: true
+    });
+  }
+</script>
+
+<style>
+  :root {
+    --page: #EDF0F4;
+    --paper: #FFFFFF;
+    --ink: #1C2230;
+    --ink-soft: #566074;
+    --rule: #D5DAE3;
+    --pencil: #2456C9;
+    --pencil-wash: #E8EEFC;
+    --pass: #2F7A4C;
+    --pass-wash: #E5F3EA;
+    --fail: #B4441C;
+    --fail-wash: #FBEAE3;
+    --unsure: #8A6A12;
+    --unsure-wash: #F8F0D9;
+    --serif: "Literata", Georgia, serif;
+    --sans: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page: #141821; --paper: #1C2130; --ink: #E7EAF0; --ink-soft: #A2AABA; --rule: #333B4D;
+      --pencil: #8FB0FF; --pencil-wash: #202B47; --pass: #7FD3A0; --pass-wash: #17301F;
+      --fail: #F3A07F; --fail-wash: #3A2219; --unsure: #E8C873; --unsure-wash: #352C14;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.55; }
+  a { color: var(--pencil); }
+  :focus-visible { outline: 2px solid var(--pencil); outline-offset: 2px; }
+
+  header { max-width: 1180px; margin: 0 auto; padding: 36px 24px 8px; }
+  header h1 { font-family: var(--serif); font-weight: 600; font-size: 34px; line-height: 1.15; margin: 0 0 8px; letter-spacing: -0.01em; }
+  header p { margin: 0; color: var(--ink-soft); max-width: 62ch; }
+
+  main { max-width: 1180px; margin: 0 auto; padding: 20px 24px 64px; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+  @media (max-width: 880px) { main { grid-template-columns: 1fr; } }
+
+
+  .paper { background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; }
+  #editor { min-height: 460px; max-height: 70vh; overflow-y: auto; padding: 28px 32px; font-family: var(--serif); font-size: 17px; line-height: 1.7; outline: none; }
+  #editor:empty::before { content: attr(data-placeholder); color: var(--ink-soft); font-family: var(--sans); font-size: 15px; white-space: pre-line; }
+  #editor h1 { font-size: 26px; line-height: 1.25; margin: 0 0 14px; }
+  #editor h2 { font-size: 21px; margin: 26px 0 8px; }
+  #editor h3 { font-size: 18px; margin: 20px 0 6px; }
+  #editor p { margin: 0 0 14px; }
+  #editor table { border-collapse: collapse; margin: 0 0 14px; font-family: var(--sans); font-size: 14px; }
+  #editor td { border: 1px solid var(--rule); padding: 4px 8px; }
+  #editor .img-ph { margin: 0 0 14px; padding: 18px; border: 1px dashed var(--rule); border-radius: 4px; text-align: center; font-family: var(--sans); font-size: 13px; color: var(--ink-soft); }
+
+  .actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 14px; }
+  button { font: inherit; cursor: pointer; }
+  #run { background: var(--pencil); color: #fff; border: 0; border-radius: 6px; padding: 11px 22px; font-weight: 600; font-size: 15px; }
+  #run:disabled { opacity: 0.6; cursor: wait; }
+  .privacy { font-size: 13px; color: var(--ink-soft); margin: 0; }
+  #error { color: var(--fail); font-size: 14px; margin: 10px 0 0; min-height: 1em; }
+
+  /* Notes: the editor's margin, in blue pencil */
+  aside h2 { font-family: var(--serif); font-size: 22px; font-weight: 600; margin: 0 0 4px; }
+  #summary { color: var(--ink-soft); margin: 0 0 18px; font-size: 15px; }
+  .empty { color: var(--ink-soft); font-size: 15px; border-left: 2px solid var(--rule); padding: 4px 0 4px 14px; }
+  .note { border-left: 3px solid var(--pencil); padding: 2px 0 2px 16px; margin: 0 0 24px; }
+  .note h3 { font-size: 16px; font-weight: 600; margin: 0 0 4px; }
+  .note .fix { margin: 0 0 6px; }
+  .note blockquote { margin: 6px 0; padding: 8px 12px; background: var(--pencil-wash); font-family: var(--serif); font-size: 15px; border-radius: 3px; }
+  .note .why { font-size: 14px; color: var(--ink-soft); margin: 0 0 8px; }
+  .feedback { font-size: 13px; color: var(--ink-soft); display: flex; align-items: center; gap: 8px; }
+  .feedback button { background: none; border: 1px solid var(--rule); border-radius: 4px; padding: 2px 10px; color: var(--ink); font-size: 13px; }
+  .feedback button[aria-pressed=true] { border-color: var(--pencil); color: var(--pencil); }
+
+  details { margin-top: 8px; border-top: 1px solid var(--rule); padding-top: 14px; }
+  summary { cursor: pointer; font-weight: 500; font-size: 15px; }
+  #allChecks { list-style: none; padding: 0; margin: 12px 0; }
+  #allChecks li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--rule); font-size: 14px; }
+  .chip { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 3px; white-space: nowrap; }
+  .chip.pass { color: var(--pass); background: var(--pass-wash); }
+  .chip.fail { color: var(--fail); background: var(--fail-wash); }
+  .chip.unsure, .chip.error { color: var(--unsure); background: var(--unsure-wash); }
+  .chip.na, .chip.pending { color: var(--ink-soft); background: var(--page); }
+  #copy { background: none; border: 1px solid var(--rule); border-radius: 6px; padding: 7px 14px; color: var(--ink); font-size: 14px; }
+
+  footer { max-width: 1180px; margin: 0 auto; padding: 0 24px 40px; font-size: 13px; color: var(--ink-soft); }
+  @media (prefers-reduced-motion: no-preference) { .note { animation: in .25s ease-out both; } @keyframes in { from { opacity: 0; transform: translateY(4px); } } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Draft Check</h1>
+  <p>Paste your blog draft before you publish. Draft Check runs 13 SEO content checks and shows the few fixes that matter most, each tied to the exact sentence.</p>
+</header>
+
+<main>
+  <section aria-label="Your draft">
+    <div id="editor" class="paper" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Paste your draft here"
+      data-placeholder="Paste your draft here.&#10;Copy it from Google Docs or Notion so headings, links and images come with it, or paste Markdown (# Title, ## Section)."></div>
+    <div class="actions">
+      <button id="run" type="button">Check my draft</button>
+      <p class="privacy">Your draft isn't saved by this tool. Six of the checks are done by Google's Gemini.</p>
+    </div>
+    <p id="error" role="alert"></p>
+  </section>
+
+  <aside aria-label="Fixes">
+    <h2>Fixes</h2>
+    <p id="summary">Most important first.</p>
+    <div id="notes"><p class="empty">Paste a draft and select Check my draft. Your fixes appear here.</p></div>
+    <details>
+      <summary>All 13 checks</summary>
+      <ul id="allChecks"></ul>
+      <button id="copy" type="button">Copy results</button>
+    </details>
+  </aside>
+</main>
+
+<footer>Built from the SEO checklist behind 22x organic traffic growth. Seven checks follow simple rules; six use AI and can be wrong, so they say "Not sure" when unclear.</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
