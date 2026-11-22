@@ -324,7 +324,12 @@ function aiChecks(d, ai) {
 
 async function callAI(payload) {
   const res = await fetch("/api/check", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-  if (!res.ok) throw new Error(res.status === 429 ? "busy" : "failed");
+  if (!res.ok) {
+    if (res.status === 429) throw new Error("busy");
+    let code = "";
+    try { code = (await res.json()).error || ""; } catch (e) {}
+    throw new Error(code || "http_" + res.status);
+  }
   return res.json();
 }
 
@@ -438,7 +443,7 @@ function init() {
       aiOk = false;
       err.textContent = e.message === "busy"
         ? "The AI checks are busy right now. The rule checks are below; try again in a minute for the rest."
-        : "The AI checks didn't run. The rule checks are below; try again in a minute.";
+        : `The AI checks didn't run (${e.message}). The rule checks are below; try again in a minute.`;
       track("ai_error", { reason: e.message });
     }
     Object.assign(results, aiChecks(d, ai));
