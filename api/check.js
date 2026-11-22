@@ -101,7 +101,10 @@ module.exports = async function handler(req, res) {
   if (!r.ok) {
     const detail = await r.text().catch(() => "");
     console.error("Gemini error", r.status, detail.slice(0, 500)); // visible in Vercel > Logs
-    return res.status(502).json({ error: "ai_failed" });
+    // Pass Google's short error message back so the page can show it (it never contains the key)
+    let msg = "";
+    try { msg = (JSON.parse(detail).error || {}).message || ""; } catch (e) {}
+    return res.status(502).json({ error: "ai_failed", status: r.status, detail: msg.slice(0, 200) });
   }
 
   let p;
