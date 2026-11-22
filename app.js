@@ -327,7 +327,7 @@ async function callAI(payload) {
   if (!res.ok) {
     if (res.status === 429) throw new Error("busy");
     let code = "";
-    try { code = (await res.json()).error || ""; } catch (e) {}
+    try { const j = await res.json(); code = [j.error, j.status, j.detail].filter(Boolean).join(" · "); } catch (e) {}
     throw new Error(code || "http_" + res.status);
   }
   return res.json();
