@@ -57,6 +57,11 @@ const clip = (s, n) => String(s || "").slice(0, n);
 const clipList = (a, n) => (Array.isArray(a) ? a : []).slice(0, n).map((x) => clip(x, 300));
 
 module.exports = async function handler(req, res) {
+  // Health check: open /api/check in a browser to see whether the key reached this deployment.
+  // It never shows the key itself.
+  if (req.method === "GET") {
+    return res.status(200).json({ key_set: Boolean(process.env.GEMINI_API_KEY), model: process.env.GEMINI_MODEL || "gemini-2.5-flash (default)" });
+  }
   if (req.method !== "POST") return res.status(405).json({ error: "method_not_allowed" });
 
   const key = process.env.GEMINI_API_KEY;
