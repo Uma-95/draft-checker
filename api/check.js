@@ -60,13 +60,15 @@ module.exports = async function handler(req, res) {
   // Health check: open /api/check in a browser to see whether the key reached this deployment.
   // It never shows the key itself.
   if (req.method === "GET") {
-    return res.status(200).json({ key_set: Boolean(process.env.GEMINI_API_KEY), model: process.env.GEMINI_MODEL || "gemini-2.5-flash (default)" });
+    return res.status(200).json({ key_set: Boolean(process.env.GEMINI_API_KEY), model: process.env.GEMINI_MODEL || "gemini-2.5-flash (default)", fallback: process.env.GEMINI_FALLBACK_MODEL || "gemini-flash-lite-latest (default)" });
   }
   if (req.method !== "POST") return res.status(405).json({ error: "method_not_allowed" });
 
   const key = process.env.GEMINI_API_KEY;
   if (!key) return res.status(500).json({ error: "not_configured" });
   const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  // Backup model, used only if the main one is overloaded (503) or rate-limited (429)
+  const fallback = process.env.GEMINI_FALLBACK_MODEL || "gemini-flash-lite-latest";
 
   let body = req.body;
   try { if (typeof body === "string") body = JSON.parse(body); } catch (e) { return res.status(400).json({ error: "bad_json" }); }
@@ -83,16 +85,26 @@ module.exports = async function handler(req, res) {
 
   const prompt = `${INSTRUCTIONS}\n\nDRAFT (JSON):\n${JSON.stringify(input)}`;
 
-  let r;
+  const callGemini = (m) => fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+    body: JSON.stringify({
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0, responseMimeType: "application/json" }
+    })
+  });
+  const wait = (ms) => new Promise((ok) => setTimeout(ok, ms));
+
+  // Try the main model twice, then the backup model once. Only busy errors (503, 429) trigger a retry.
+  const attempts = [model, model, fallback].filter((m, i, all) => m && (i < 2 || m !== model));
+  let r, modelUsed = model;
   try {
-    r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0, responseMimeType: "application/json" }
-      })
-    });
+    for (let i = 0; i < attempts.length; i++) {
+      modelUsed = attempts[i];
+      r = await callGemini(modelUsed);
+      if (r.status !== 503 && r.status !== 429) break;
+      if (i < attempts.length - 1) await wait(1500);
+    }
   } catch (e) {
     return res.status(502).json({ error: "ai_unreachable" });
   }
@@ -121,6 +133,7 @@ module.exports = async function handler(req, res) {
 
   return res.status(200).json({
     prompt_version: PROMPT_VERSION,
+    model_used: modelUsed,
     answer_first: { status: st("answer_first"), answer_sentence: clip(p.answer_first && p.answer_first.answer_sentence, 600), note: note("answer_first") },
     original: { status: st("original"), evidence: clip(p.original && p.original.evidence, 600), note: note("original") },
     follow_ups: { status: st("follow_ups"), unanswered: clipList(p.follow_ups && p.follow_ups.unanswered, 4), note: note("follow_ups") },
