@@ -225,7 +225,9 @@ function ruleChecks(d) {
     if (b.type !== "p" && b.type !== "ul" && b.type !== "ol") continue;
     if ((b.links || []).length) continue;
     const parts = b.type === "p" ? sentences(b.text) : b.items;
-    parts.filter((x) => STAT.test(x)).forEach((x) => unlinked.push(x));
+    // Skip code examples and prices: they aren't claims that need a source
+    const CODE_OR_PRICE = /[{}=`]|[$₹€£]\s?\d|\b\d+(\.\d+)?\s?(usd|inr|eur)\b|per (seat|month|year|user)/i;
+    parts.filter((x) => STAT.test(x) && !CODE_OR_PRICE.test(x)).forEach((x) => unlinked.push(x));
   }
   if (!d.body.some((b) => STAT.test(textOf(b)))) out.stats_linked = result("stats_linked", "na");
   else out.stats_linked = !unlinked.length
